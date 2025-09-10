@@ -22,6 +22,7 @@
     "ListPrice": 199.99,
     "FinalPrice": 199.99
   },
+
   {
     "Id": "985RF",
     "NameWithoutBrand": "Talus Tent - 4-Person, 3-Season",
@@ -44,6 +45,7 @@
     "ListPrice": 199.99,
     "FinalPrice": 199.99
   },
+
   {
     "Id": "989CG",
     "NameWithoutBrand": "Talus Tent - 3-Person, 3-Season",
@@ -66,6 +68,7 @@
     "ListPrice": 179.99,
     "FinalPrice": 179.99
   },
+
   {
     "Id": "985PR",
     "NameWithoutBrand": "Alpine Guide Tent - 3-Person, 4-Season",
@@ -88,6 +91,7 @@
     "ListPrice": 349.99,
     "FinalPrice": 349.99
   },
+  
   {
     "Id": "880RT",
     "NameWithoutBrand": "Ajax Tent - 2-Person, 3-Season",
