@@ -1,20 +1,33 @@
-import { getParam } from "./utils.mjs";
-import ProductData from "./ProductData.mjs";
-import ProductDetails from "./ProductDetails.mjs";
+import { renderListWithTemplate } from "./utils.mjs";
 
-const dataSource = new ProductData("tents");
-const productID = getParam("product");
+// template for each product
+function productCardTemplate(product) {
+  return `
+    <li class="product-card">
+      <a href="product_pages/?product=${product.Id}">
+        <img src="${product.Image}" alt="${product.Name}">
+        <h2>${product.Brand.Name}</h2>
+        <h3>${product.Name}</h3>
+        <p class="product-card__price">$${product.FinalPrice}</p>
+      </a>
+    </li>
+  `;
+}
 
-const product = new ProductDetails(productID, dataSource);
-product.init();
+export default class ProductList {
+  constructor(category, dataSource, listElement) {
+    this.category = category;
+    this.dataSource = dataSource;
+    this.listElement = listElement;
+  }
 
-// // add to cart button event handler
-// async function addToCartHandler(e) {
-//   const product = await dataSource.findProductById(e.target.dataset.id);
-//   addProductToCart(product);
-// }
+  async init() {
+    const list = await this.dataSource.getData();
+    this.renderList(list);
+  }
 
-// // add listener to Add to Cart button
-// document
-//   .getElementById("addToCart")
-//   .addEventListener("click", addToCartHandler);
+  renderList(list) {
+    // usa a função utilitária para renderizar a lista
+    renderListWithTemplate(productCardTemplate, this.listElement, list, "afterbegin", true);
+  }
+}

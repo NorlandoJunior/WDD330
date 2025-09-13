@@ -1,31 +1,62 @@
-import { getLocalStorage } from "./utils.mjs";
+// cart.js
+import { getLocalStorage, setLocalStorage } from './utils.mjs';
 
-function renderCartContents() {
-  const cartItems = getLocalStorage("so-cart") || []; // Certificate this is an array
+// Função para renderizar o carrinho na página
+function renderCart() {
+  const cartList = document.querySelector('.product-list');
+  cartList.innerHTML = ''; // limpa a lista antes de renderizar
 
-  const productListElement = document.querySelector(".product-list");
+  const cart = getLocalStorage('cart') || [];
 
-  if (cartItems.length === 0) {
-    productListElement.innerHTML = "<p>Your cart is empty.</p>";
+  if (cart.length === 0) {
+    cartList.innerHTML = '<li class="empty-cart">Your cart is empty.</li>';
     return;
   }
 
-  const htmlItems = cartItems.map((item) => cartItemTemplate(item));
-  productListElement.innerHTML = htmlItems.join("");
+  cart.forEach(item => {
+    const li = document.createElement('li');
+    li.className = 'cart-card divider';
+    li.innerHTML = `
+      <img src="${item.image}" alt="${item.name}" class="cart-card__img">
+      <h2 class="card__name">${item.name}</h2>
+      <p class="cart-card__quantity">qty: ${item.quantity}</p>
+      <p class="cart-card__price">$${item.price.toFixed(2)}</p>
+    `;
+    cartList.appendChild(li);
+  });
 }
 
-function cartItemTemplate(item) {
-  return `<li class="cart-card divider">
-    <a href="#" class="cart-card__image">
-      <img src="${item.Image}" alt="${item.Name}" />
-    </a>
-    <a href="#">
-      <h2 class="card__name">${item.Name}</h2>
-    </a>
-    <p class="cart-card__color">${item.Colors[0].ColorName}</p>
-    <p class="cart-card__quantity">qty: 1</p>
-    <p class="cart-card__price">$${item.FinalPrice}</p>
-  </li>`;
+// Função para adicionar item ao carrinho
+export function addToCart(product) {
+  const cart = getLocalStorage('cart') || [];
+  const existingProduct = cart.find(item => item.id === product.id);
+
+  if (existingProduct) {
+    existingProduct.quantity += 1;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
+
+  setLocalStorage('cart', cart);
+  renderCart();
 }
 
-renderCartContents();
+// Detecta todos os botões "Add to Cart"
+const addButtons = document.querySelectorAll('.add-to-cart');
+addButtons.forEach(button => {
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    const product = {
+      id: button.dataset.id,
+      name: button.dataset.name,
+      price: parseFloat(button.dataset.price),
+      image: button.dataset.image || ""
+    };
+
+    addToCart(product);
+  });
+});
+
+// Inicializa a página do carrinho
+renderCart();
