@@ -1,62 +1,30 @@
-// cart.js
-import { getLocalStorage, setLocalStorage } from './utils.mjs';
+import { getLocalStorage, loadHeaderFooter } from "./utils.mjs";
 
-// Função para renderizar o carrinho na página
-function renderCart() {
-  const cartList = document.querySelector('.product-list');
-  cartList.innerHTML = ''; // limpa a lista antes de renderizar
+loadHeaderFooter();
 
-  const cart = getLocalStorage('cart') || [];
-
-  if (cart.length === 0) {
-    cartList.innerHTML = '<li class="empty-cart">Your cart is empty.</li>';
-    return;
-  }
-
-  cart.forEach(item => {
-    const li = document.createElement('li');
-    li.className = 'cart-card divider';
-    li.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" class="cart-card__img">
-      <h2 class="card__name">${item.name}</h2>
-      <p class="cart-card__quantity">qty: ${item.quantity}</p>
-      <p class="cart-card__price">$${item.price.toFixed(2)}</p>
-    `;
-    cartList.appendChild(li);
-  });
+function renderCartContents() {
+  const cartItems = getLocalStorage("so-cart");
+  const htmlItems = cartItems.map((item) => cartItemTemplate(item));
+  document.querySelector(".product-list").innerHTML = htmlItems.join("");
 }
 
-// Função para adicionar item ao carrinho
-export function addToCart(product) {
-  const cart = getLocalStorage('cart') || [];
-  const existingProduct = cart.find(item => item.id === product.id);
+function cartItemTemplate(item) {
+  const newItem = `<li class="cart-card divider">
+  <a href="#" class="cart-card__image">
+    <img
+      src="${item.Image}"
+      alt="${item.Name}"
+    />
+  </a>
+  <a href="#">
+    <h2 class="card__name">${item.Name}</h2>
+  </a>
+  <p class="cart-card__color">${item.Colors[0].ColorName}</p>
+  <p class="cart-card__quantity">qty: 1</p>
+  <p class="cart-card__price">$${item.FinalPrice}</p>
+</li>`;
 
-  if (existingProduct) {
-    existingProduct.quantity += 1;
-  } else {
-    cart.push({ ...product, quantity: 1 });
-  }
-
-  setLocalStorage('cart', cart);
-  renderCart();
+  return newItem;
 }
 
-// Detecta todos os botões "Add to Cart"
-const addButtons = document.querySelectorAll('.add-to-cart');
-addButtons.forEach(button => {
-  button.addEventListener('click', (event) => {
-    event.preventDefault();
-
-    const product = {
-      id: button.dataset.id,
-      name: button.dataset.name,
-      price: parseFloat(button.dataset.price),
-      image: button.dataset.image || ""
-    };
-
-    addToCart(product);
-  });
-});
-
-// Inicializa a página do carrinho
-renderCart();
+renderCartContents();

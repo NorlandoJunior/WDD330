@@ -1,33 +1,23 @@
-import { renderListWithTemplate } from "./utils.mjs";
+// product.js
+import { loadHeaderFooter, getParam } from "./utils.mjs";
+import ProductData from "./ProductData.mjs";
 
-// template for each product
-function productCardTemplate(product) {
-  return `
-    <li class="product-card">
-      <a href="product_pages/?product=${product.Id}">
-        <img src="${product.Image}" alt="${product.Name}">
-        <h2>${product.Brand.Name}</h2>
-        <h3>${product.Name}</h3>
-        <p class="product-card__price">$${product.FinalPrice}</p>
-      </a>
-    </li>
-  `;
+loadHeaderFooter();
+
+const productId = getParam("product");
+const dataSource = new ProductData();
+
+async function init() {
+  const product = await dataSource.findProductById(productId);
+
+  document.getElementById("p-image").src = product.Images.PrimaryLarge;
+  document.getElementById("p-image").alt = product.Name;
+  document.getElementById("p-brand").textContent = product.Brand.Name;
+  document.getElementById("p-name").textContent = product.NameWithoutBrand;
+  document.getElementById("p-color").textContent = product.Colors.join(", ");
+  document.getElementById("p-description").textContent = product.Description;
+  document.getElementById("p-price").textContent = `$${product.FinalPrice}`;
+  document.getElementById("add-to-cart").dataset.id = product.Id;
 }
 
-export default class ProductList {
-  constructor(category, dataSource, listElement) {
-    this.category = category;
-    this.dataSource = dataSource;
-    this.listElement = listElement;
-  }
-
-  async init() {
-    const list = await this.dataSource.getData();
-    this.renderList(list);
-  }
-
-  renderList(list) {
-    // usa a função utilitária para renderizar a lista
-    renderListWithTemplate(productCardTemplate, this.listElement, list, "afterbegin", true);
-  }
-}
+init();

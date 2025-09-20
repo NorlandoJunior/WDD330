@@ -1,23 +1,28 @@
-function convertToJson(res) {
-  if (res.ok) {
-    return res.json();
+// ProductData.mjs
+const baseURL = import.meta.env.VITE_SERVER_URL;
+
+function convertToJson(response) {
+  if (response.ok) {
+    return response.json();
   } else {
-    throw new Error("Bad Response");
+    throw new Error("Bad response from server");
   }
 }
 
 export default class ProductData {
-  constructor(category) {
-    this.category = category;
-    this.path = `../public/json/${this.category}.json`;
+  constructor() {
+    // No category/path needed here; category is passed to getData
   }
-  getData() {
-    return fetch(this.path)
-      .then(convertToJson)
-      .then((data) => data);
+
+  async getData(category) {
+    const response = await fetch(`${baseURL}products/search/${category}`);
+    const data = await convertToJson(response);
+    return data.Result; // API returns { Result: [...] }
   }
+
   async findProductById(id) {
-    const products = await this.getData();
-    return products.find((item) => item.Id === id);
+    const response = await fetch(`${baseURL}product/${id}`);
+    const data = await convertToJson(response);
+    return data.Result;
   }
 }
