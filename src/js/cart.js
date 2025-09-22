@@ -4,7 +4,26 @@ function renderCartContents() {
   const cartItems = getLocalStorage("so-cart");
   const htmlItems = cartItems.map((item) => cartItemTemplate(item));
   document.querySelector(".product-list").innerHTML = htmlItems.join("");
-}
+
+
+  cartItems.forEach((item) => {
+    const deleteButton = document.getElementById(`delete-${item.Id}`);
+    if (deleteButton) {
+      deleteButton.addEventListener("click", () => {
+        deleteItem(item.Id);
+      });
+    }
+  });
+  //   let deleteButton = document.getElementById(item.Id);
+
+  //   deleteButton.textContent = "X";
+  //   deleteButton.classList.add("delete");
+
+  //   deleteButton.addEventListener("click", function () {
+  //     cartItems.removeChild(item);
+  //     deleteItem(item.textContent);
+  //   });
+};
 
 function cartItemTemplate(item) {
   const newItem = `<li class="cart-card divider">
@@ -20,9 +39,20 @@ function cartItemTemplate(item) {
   <p class="cart-card__color">${item.Colors[0].ColorName}</p>
   <p class="cart-card__quantity">qty: 1</p>
   <p class="cart-card__price">$${item.FinalPrice}</p>
+  <button id="delete-${item.Id}" class="delete">X</button>
 </li>`;
 
   return newItem;
+}
+
+function deleteItem(itemId) {
+  let cartItems = getLocalStorage("so-cart") || [];
+
+  cartItems = cartItems.filter((item) => item.Id !== itemId);
+
+  localStorage.setItem("so-cart", JSON.stringify(cartItems));
+
+  renderCartContents();
 }
 
 renderCartContents();
