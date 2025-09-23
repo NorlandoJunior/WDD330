@@ -14,15 +14,6 @@ function renderCartContents() {
       });
     }
   });
-  //   let deleteButton = document.getElementById(item.Id);
-
-  //   deleteButton.textContent = "X";
-  //   deleteButton.classList.add("delete");
-
-  //   deleteButton.addEventListener("click", function () {
-  //     cartItems.removeChild(item);
-  //     deleteItem(item.textContent);
-  //   });
 };
 
 function cartItemTemplate(item) {
