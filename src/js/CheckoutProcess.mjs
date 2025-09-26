@@ -90,7 +90,7 @@ export default class CheckoutProcess {
     order.tax = this.tax;
     order.shipping = this.shipping;
     order.items = packageItems(this.list);
-    console.log(order);
+    //console.log(order);
 
     try {
       const response = await services.checkout(order);
