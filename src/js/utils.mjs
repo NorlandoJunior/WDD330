@@ -7,7 +7,12 @@ export function qs(selector, parent = document) {
 
 // Get a value from localStorage and parse it from JSON
 export function getLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key));
+  try {
+    return JSON.parse(localStorage.getItem(key));
+  } catch (err) {
+    console.warn(`Error parsing localStorage key "${key}":`, err);
+    return null;
+  }
 }
 
 // Save a value to localStorage as JSON
@@ -15,9 +20,16 @@ export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
+// Simple alert message helper (can be replaced with custom modal later)
+export function alertMessage(message, type = "info") {
+  // For now, just use native alert
+  alert(`[${type.toUpperCase()}] ${message}`);
+}
+
 // Add the same callback to both touchend and click events
 export function setClick(selector, callback) {
   const element = qs(selector);
+  if (!element) return;
   element.addEventListener("touchend", (event) => {
     event.preventDefault();
     callback();
@@ -42,9 +54,7 @@ export function renderListWithTemplate(
 ) {
   const htmlStrings = list.map(template);
   // If clear is true, empty the parent element first
-  if (clear) {
-    parentElement.innerHTML = "";
-  }
+  if (clear) parentElement.innerHTML = "";
   parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
 
@@ -52,14 +62,13 @@ export function renderListWithTemplate(
 // Optionally run a callback after rendering
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
-  if (callback) {
-    callback(data);
-  }
+  if (callback) callback(data);
 }
 
 // Private helper: load an HTML file as text
 async function loadTemplate(path) {
   const res = await fetch(path);
+  if (!res.ok) throw new Error(`Failed to load template: ${path}`);
   return await res.text();
 }
 
@@ -73,4 +82,37 @@ export async function loadHeaderFooter() {
 
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
+}
+
+//Wishlist helpers
+
+// Get wishlist from localStorage (returns an array)
+export function getWishlist() {
+  return getLocalStorage("wishlist") || [];
+}
+
+// Add a product to the wishlist
+export function addToWishlist(product) {
+  const wishlist = getWishlist();
+  // Avoid duplicates
+  if (!wishlist.some(item => item.id === product.id)) {
+    wishlist.push(product);
+    setLocalStorage("wishlist", wishlist);
+    alertMessage("Added to wishlist!", "success");
+  } else {
+    alertMessage("Product already in wishlist", "warning");
+  }
+}
+
+// Remove a product from the wishlist
+export function removeFromWishlist(productId) {
+  let wishlist = getWishlist();
+  wishlist = wishlist.filter(item => item.id !== productId);
+  setLocalStorage("wishlist", wishlist);
+  alertMessage("Removed from wishlist", "info");
+}
+
+// Check if a product is in the wishlist
+export function isInWishlist(productId) {
+  return getWishlist().some(item => item.id === productId);
 }
