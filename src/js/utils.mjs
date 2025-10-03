@@ -38,3 +38,11 @@ export function renderListWithTemplate(template, parentElement, list, position =
   }
   parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
+
+export function updateCartCounter() {
+  const cartItemCounter = document.getElementById("cart-item-number");
+  const cartItems = getLocalStorage("so-cart") || [];
+  if (cartItemCounter) {
+    cartItemCounter.textContent = cartItems.length;
+  }
+}

@@ -131,6 +131,17 @@ button {
   fill: gray;
 }
 
+.cart span {
+  background-color: var(--primary-color);
+  border-radius: 2rem;
+  color: var(--secondary-color);
+  position: absolute;
+  top: 0;
+  right: -15px;
+  padding: 0.25rem 0.5rem;
+  margin-left: 1rem;
+}
+
 /* End cart icon styles */
 
 .mission {
