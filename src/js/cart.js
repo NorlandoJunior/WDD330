@@ -14,6 +14,7 @@ function renderCartContents() {
       });
     }
   });
+  cartTotal();
 };
 
 function cartItemTemplate(item) {
@@ -44,7 +45,23 @@ function deleteItem(itemId) {
   localStorage.setItem("so-cart", JSON.stringify(cartItems));
 
   renderCartContents();
+  cartTotal();
+}
+
+function cartTotal() {
+  let cartItems = getLocalStorage("so-cart") || [];
+  let total = 0;
+
+  cartItems.forEach((item) => {
+    total += parseFloat(item.FinalPrice) || 0;
+  });
+
+  const displayPrice = document.getElementById("cart-total");
+  if (displayPrice) {
+    displayPrice.textContent = `Total: $${total.toFixed(2)}`;
+  }
 }
 
 updateCartCounter();
 renderCartContents();
+cartTotal();

@@ -263,6 +263,11 @@ button {
   border: none;
 }
 
+/* cart price styles */
+#cart-total {
+  font-size: 2rem;
+}
+
 @media screen and (min-width: 500px) {
   body {
     max-width: 1080px;
